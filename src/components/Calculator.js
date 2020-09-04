@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Table, Button, Container } from 'react-bootstrap';
 
+// styles of buttons
 const styles = {
   buttonCaculator: {
     backgroundColor: '#e1d9d7',
@@ -30,6 +31,7 @@ export default class Calculator extends Component {
       totally: 0
     };
   }
+  //function that gets operations and operands 
   handleChange = (e) => {
     if(e.target.name === "+"){
       this.setState({
@@ -49,11 +51,11 @@ export default class Calculator extends Component {
       })
     }
     this.setState({
-      [e.target.name]: [e.target.name],
       initialValue: 1,
       values: (this.state.values != null ? this.state.values : '') + [e.target.name]
     })
   }
+  //function that clear the solution
   handleClear = () => {
     if(this.state.totally === 1){
       this.setState({
@@ -67,6 +69,7 @@ export default class Calculator extends Component {
       })
     }
   }
+  //function that gets results of the operations
   handleResult = (op) => {
     switch (op) {
       case 'sum':
@@ -102,13 +105,14 @@ export default class Calculator extends Component {
       <Container>
         <Table bordered>
             <thead>
+              <th colSpan="4"><h1>Calculator without Hooks</h1></th>
+            </thead>
+            <tbody>
               <tr>
                   <td colSpan="4">
                     <label>{this.state.initialValue === 0 ? this.state.initialValue : this.state.values === '' ? 0 : this.state.values}</label>
                   </td>
               </tr>
-            </thead>
-            <tbody>
             <tr>
                 <td>
                   <Button variant="secondary" size="lg" name="+" active style={styles.buttonCaculator} onClick={this.handleChange}>
