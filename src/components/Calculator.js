@@ -26,7 +26,8 @@ export default class Calculator extends Component {
     this.state = {
       initialValue: 0,
       values: null,
-      operation: null
+      operation: null,
+      totally: 0
     };
   }
   handleChange = (e) => {
@@ -54,36 +55,45 @@ export default class Calculator extends Component {
     })
   }
   handleClear = () => {
-    this.setState({
-      initialValue: 0,
-      values: null
-    })
+    if(this.state.totally === 1){
+      this.setState({
+        initialValue: 0,
+        values: null,
+        totally: 0
+      })
+    }else{
+      this.setState({
+        values: this.state.values.slice(0, -1)
+      })
+    }
   }
   handleResult = (op) => {
-    console.log(op)
     switch (op) {
       case 'sum':
         this.setState({
-          values: parseInt(this.state.values.split("+")[0]) + parseInt(this.state.values.split("+")[1])
+          values: parseFloat(this.state.values.split("+")[0]) + parseFloat(this.state.values.split("+")[1]),
+          totally: 1
         })
         break;
       case 'subtract':
         this.setState({
-          values: parseInt(this.state.values.split("-")[0]) - parseInt(this.state.values.split("-")[1])
+          values: parseFloat(this.state.values.split("-")[0]) - parseFloat(this.state.values.split("-")[1]),
+          totally: 1
         })
         break;
       case 'multiply':
         this.setState({
-          values: parseInt(this.state.values.split("*")[0]) * parseInt(this.state.values.split("*")[1])
+          values: parseFloat(this.state.values.split("*")[0]) * parseFloat(this.state.values.split("*")[1]),
+          totally: 1
         })
         break;
       case 'split':
         this.setState({
-          values: parseInt(this.state.values.split("%")[0]) / parseInt(this.state.values.split("%")[1])
+          values: parseFloat(this.state.values.split("%")[0]) / parseFloat(this.state.values.split("%")[1]),
+          totally: 1
         })
         break;
       default:
-        console.log('break')
         break;
     }
   }
@@ -94,7 +104,7 @@ export default class Calculator extends Component {
             <thead>
               <tr>
                   <td colSpan="4">
-                    <label>{this.state.initialValue === 0 ? this.state.initialValue : this.state.values}</label>
+                    <label>{this.state.initialValue === 0 ? this.state.initialValue : this.state.values === '' ? 0 : this.state.values}</label>
                   </td>
               </tr>
             </thead>
