@@ -21,25 +21,34 @@ const styles = {
     }
   }
   
-function CalculatorWithHooks() {
-  const [initialValue, setInitialValue] = useState(0);
+function CalculatorWithHooks(props) {
+  console.log(props.initialValue)
+  const [initialValue, setInitialValue] = useState(props.initialValue);
   const [values, setValues] = useState(null);
   const [operation, setOperation] = useState(null);
   const [totally, setTotally] = useState(0);
-  
-  //function that gets operations and operands 
-  const handleChange = (e) => {
+  const [disabled, setDiseabled] = useState(true);
+  const [disabledEquals, setdisabledEquals] = useState(true);
+  //function that gets operations  
+  const handleOperation = (e) => {
     if(e.target.name === "+"){
-      setOperation('sum')
+        setOperation('sum')
     }else if(e.target.name === "-"){
-      setOperation('subtract')
+        setOperation('subtract')
     }else if(e.target.name === "*"){
-      setOperation('multiply')
+        setOperation('multiply')
     }else if(e.target.name === "%"){
-      setOperation('split')
+        setOperation('split')
     }
+    setValues((values != null ? values : '') + [e.target.name])
+    setDiseabled(true)
+  }
+  //function that gets operands 
+  const handleChange = (e) => {
     setInitialValue(1)
     setValues((values != null ? values : '') + [e.target.name])
+    setDiseabled(false)
+    setdisabledEquals(false)
   }
   //function that clear the solution
   const handleClear = () => {
@@ -47,28 +56,48 @@ function CalculatorWithHooks() {
         setInitialValue(0)
         setValues(null)
         setTotally(0)
+        setDiseabled(true)
+        setdisabledEquals(true)
     }else{
-        setValues(values.slice(0, -1))
+        if(values !== null){
+            setValues(values.slice(0, -1))
+            if(values.length === 1){
+                setDiseabled(true)
+                setdisabledEquals(true)
+            }
+        }
     }
   }
   //function that gets results of the operations
   const handleResult = (op) => {
     switch (op) {
       case 'sum':
-        setValues(parseFloat(values.split("+")[0]) + parseFloat(values.split("+")[1]))
-        setTotally(1)
+        if(parseFloat((values.split("+")[1])) > 0){
+            setValues(parseFloat(values.split("+")[0]) + parseFloat(values.split("+")[1]))
+            setTotally(1)
+            setdisabledEquals(false)
+        }
         break;
       case 'subtract':
-        setValues(parseFloat(values.split("-")[0]) - parseFloat(values.split("-")[1]))
-        setTotally(1)
+        if(parseFloat((values.split("-")[1])) > 0){
+            setValues(parseFloat(values.split("-")[0]) - parseFloat(values.split("-")[1]))
+            setTotally(1)
+            setdisabledEquals(false)
+        }
         break;
       case 'multiply':
-        setValues(parseFloat(values.split("*")[0]) * parseFloat(values.split("*")[1]))
-        setTotally(1)
+        if(parseFloat((values.split("*")[1])) > 0){
+            setValues(parseFloat(values.split("*")[0]) * parseFloat(values.split("*")[1]))
+            setTotally(1)
+            setdisabledEquals(false)
+        }
         break;
       case 'split':
-        setValues(parseFloat(values.split("%")[0]) / parseFloat(values.split("%")[1]))
-        setTotally(1)
+        if(parseFloat((values.split("%")[1])) > 0){
+            setValues(parseFloat(values.split("%")[0]) / parseFloat(values.split("%")[1]))
+            setTotally(1)
+            setdisabledEquals(false)
+        }
         break;
       default:
         break;
@@ -78,7 +107,9 @@ function CalculatorWithHooks() {
     <Container>
         <Table bordered>
             <thead>
-                <th colSpan="4"><h1>Calculator with Hooks</h1></th>
+                <tr>
+                    <th colSpan="4"><h1>Calculator with Hooks</h1></th>
+                </tr>
             </thead>
             <tbody>
               <tr>
@@ -88,22 +119,22 @@ function CalculatorWithHooks() {
               </tr>
             <tr>
                 <td>
-                  <Button variant="secondary" size="lg" name="+" active style={styles.buttonCaculator} onClick={handleChange}>
+                  <Button variant="secondary" size="lg" disabled={disabled} name="+" active style={styles.buttonCaculator} onClick={handleOperation}>
                     +
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="-" active style={styles.buttonCaculator} onClick={handleChange}>
+                  <Button variant="secondary" size="lg" disabled={disabled} name="-" active style={styles.buttonCaculator} onClick={handleOperation}>
                     -
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="*" active style={styles.buttonCaculator} onClick={handleChange}>
+                  <Button variant="secondary" size="lg" disabled={disabled} name="*" active style={styles.buttonCaculator} onClick={handleOperation}>
                     *
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="%" active style={styles.buttonCaculator} onClick={handleChange}>
+                  <Button variant="secondary" size="lg"  disabled={disabled} name="%" active style={styles.buttonCaculator} onClick={handleOperation}>
                     %
                   </Button>
                 </td>
@@ -125,7 +156,7 @@ function CalculatorWithHooks() {
                   </Button>
                 </td>
                 <td rowSpan="4">
-                  <Button variant="secondary" size="lg" active style={styles.buttonEquals} onClick={() => handleResult(operation)}>
+                  <Button variant="secondary" size="lg"  disabled={disabledEquals} active style={styles.buttonEquals} onClick={() => handleResult(operation)}>
                     =
                   </Button>
                 </td>

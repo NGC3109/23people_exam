@@ -25,14 +25,16 @@ export default class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      initialValue: 0,
+      initialValue: this.props.initialValue,
       values: null,
       operation: null,
-      totally: 0
+      totally: 0,
+      disabled: true,
+      disabledEquals: true
     };
   }
-  //function that gets operations and operands 
-  handleChange = (e) => {
+  //function that gets operations  
+  handleOperation = (e) => {
     if(e.target.name === "+"){
       this.setState({
         operation: 'sum'
@@ -51,8 +53,17 @@ export default class Calculator extends Component {
       })
     }
     this.setState({
-      initialValue: 1,
+      disabled: true,
       values: (this.state.values != null ? this.state.values : '') + [e.target.name]
+    })
+  }
+  //function that gets operations and operands 
+  handleChange = (e) => {
+    this.setState({
+      initialValue: 1,
+      values: (this.state.values != null ? this.state.values : '') + [e.target.name],
+      disabled: false,
+      disabledEquals: false
     })
   }
   //function that clear the solution
@@ -61,40 +72,63 @@ export default class Calculator extends Component {
       this.setState({
         initialValue: 0,
         values: null,
-        totally: 0
+        totally: 0,
+        disabled: true,
+        disabledEquals: true
       })
     }else{
-      this.setState({
-        values: this.state.values.slice(0, -1)
-      })
+      if(this.state.values !== null){
+        this.setState({
+          values: this.state.values.slice(0, -1)
+        })
+        if(this.state.values.length === 1){
+          this.setState({
+            disabled: true,
+            disabledEquals: true
+          })
+        }
+      }
+      
     }
   }
   //function that gets results of the operations
   handleResult = (op) => {
     switch (op) {
       case 'sum':
-        this.setState({
-          values: parseFloat(this.state.values.split("+")[0]) + parseFloat(this.state.values.split("+")[1]),
-          totally: 1
-        })
+        if(parseFloat(this.state.values.split("+")[1]) > 0){
+          this.setState({
+            values: parseFloat(this.state.values.split("+")[0]) + parseFloat(this.state.values.split("+")[1]),
+            totally: 1,
+            disabledEquals: false
+          })
+        }
         break;
       case 'subtract':
-        this.setState({
-          values: parseFloat(this.state.values.split("-")[0]) - parseFloat(this.state.values.split("-")[1]),
-          totally: 1
-        })
+        if(parseFloat(this.state.values.split("-")[1]) > 0){
+          this.setState({
+            values: parseFloat(this.state.values.split("-")[0]) - parseFloat(this.state.values.split("-")[1]),
+            totally: 1,
+            disabledEquals: false
+          })
+        }
         break;
       case 'multiply':
-        this.setState({
-          values: parseFloat(this.state.values.split("*")[0]) * parseFloat(this.state.values.split("*")[1]),
-          totally: 1
-        })
+        if(parseFloat(this.state.values.split("*")[1]) > 0){
+          this.setState({
+            values: parseFloat(this.state.values.split("*")[0]) * parseFloat(this.state.values.split("*")[1]),
+            totally: 1,
+            disabledEquals: false
+          })
+        }
         break;
       case 'split':
-        this.setState({
-          values: parseFloat(this.state.values.split("%")[0]) / parseFloat(this.state.values.split("%")[1]),
-          totally: 1
-        })
+        if(parseFloat(this.state.values.split("%")[1]) > 0){
+          this.setState({
+            values: parseFloat(this.state.values.split("%")[0]) / parseFloat(this.state.values.split("%")[1]),
+            totally: 1,
+            disabledEquals: false
+          })
+        }
         break;
       default:
         break;
@@ -105,7 +139,9 @@ export default class Calculator extends Component {
       <Container>
         <Table bordered>
             <thead>
-              <th colSpan="4"><h1>Calculator without Hooks</h1></th>
+              <tr>
+                <th colSpan="4"><h1>Calculator without Hooks</h1></th>
+              </tr>
             </thead>
             <tbody>
               <tr>
@@ -115,22 +151,22 @@ export default class Calculator extends Component {
               </tr>
             <tr>
                 <td>
-                  <Button variant="secondary" size="lg" name="+" active style={styles.buttonCaculator} onClick={this.handleChange}>
+                  <Button variant="secondary" size="lg" disabled={this.state.disabled} name="+" active style={styles.buttonCaculator} onClick={this.handleOperation}>
                     +
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="-" active style={styles.buttonCaculator} onClick={this.handleChange}>
+                  <Button variant="secondary" size="lg" disabled={this.state.disabled} name="-" active style={styles.buttonCaculator} onClick={this.handleOperation}>
                     -
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="*" active style={styles.buttonCaculator} onClick={this.handleChange}>
+                  <Button variant="secondary" size="lg" disabled={this.state.disabled} name="*" active style={styles.buttonCaculator} onClick={this.handleOperation}>
                     *
                   </Button>
                 </td>
                 <td>
-                  <Button variant="secondary" size="lg" name="%" active style={styles.buttonCaculator} onClick={this.handleChange}>
+                  <Button variant="secondary" size="lg" disabled={this.state.disabled} name="%" active style={styles.buttonCaculator} onClick={this.handleOperation}>
                     %
                   </Button>
                 </td>
@@ -152,7 +188,7 @@ export default class Calculator extends Component {
                   </Button>
                 </td>
                 <td rowSpan="4">
-                  <Button variant="secondary" size="lg" active style={styles.buttonEquals} onClick={() => this.handleResult(this.state.operation)}>
+                  <Button variant="secondary" size="lg" disabled={this.state.disabledEquals} active style={styles.buttonEquals} onClick={() => this.handleResult(this.state.operation)}>
                     =
                   </Button>
                 </td>

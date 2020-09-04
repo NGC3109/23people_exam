@@ -7,8 +7,8 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Calculator />
-        <CalculatorWithHooks />
+        <Calculator initialValue={0} />
+        <CalculatorWithHooks initialValue={0}/>
       </header>
     </div>
   );
