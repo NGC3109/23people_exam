@@ -63,11 +63,11 @@ function CalculatorWithHooks() {
         setTotally(1)
         break;
       case 'multiply':
-        setValues(parseFloat(values.split("*")[0]) - parseFloat(values.split("*")[1]))
+        setValues(parseFloat(values.split("*")[0]) * parseFloat(values.split("*")[1]))
         setTotally(1)
         break;
       case 'split':
-        setValues(parseFloat(values.split("%")[0]) - parseFloat(values.split("%")[1]))
+        setValues(parseFloat(values.split("%")[0]) / parseFloat(values.split("%")[1]))
         setTotally(1)
         break;
       default:
